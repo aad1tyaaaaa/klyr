@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  password      String
+  name          String?
+  trustScore    Int      @default(0)
+  lastVerified  String?
+  sharedCount   Int      @default(0)
+  credentials   Credential[]
+  activities    Activity[]
+}
+
+model Credential {
+  id         Int      @id @default(autoincrement())
+  title      String
+  issuer     String
+  type       String   // Education, Employment, Health, Government
+  status     String   // Verified, Pending
+  expiry     String?
+  icon       String
+  color      String
+  isClock    Boolean  @default(false)
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Activity {
+  id         Int      @id @default(autoincrement())
+  title      String
+  subtitle   String
+  icon       String
+  bgColor    String
+  status     String   @default("Verified")
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+}
